@@ -1,0 +1,18 @@
+{
+  // trading_mode — paper (тест) или live (боевой режим)
+  "trading_mode": "paper",
+
+  // strategies — параметры стратегий, секция по названию стратегии
+  "strategies": {
+    "cross_exchange_btc_usdc": {
+      // target_size_btc — сколько BTC покупать/продавать за одну операцию
+      "target_size_btc": 0.01,
+      // min_profit_usd — минимальный профит в USDC, при котором совершится сделка
+      "min_profit_usd": 1.0,
+      // min_spread_bps — минимальный спред арбитража (bps = 0.01%)
+      "min_spread_bps": 5.0,
+      // refresh_interval — как часто бот проверяет стаканы (сек)
+      "refresh_interval": 0.5
+    }
+  }
+}
