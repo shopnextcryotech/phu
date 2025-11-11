@@ -1,0 +1,10 @@
+# Конфиг стратегий (редактируется в любом текстовом редакторе)
+# YAML полностью поддерживает комментарии и легко читается вручную
+trading_mode: paper  # paper (тест) или live (боевой режим)
+
+strategies:
+  cross_exchange_btc_usdc:
+    target_amount_usdc: 15      # Сумма в USDC, которую будете использовать для покупки BTC
+    min_profit_percent: 0.01    # Минимальный профит в процентах от круга (например, 0.01% оборота)
+    use_websocket: true         # Использовать WebSocket для стаканов (максимальная скорость)
+    rest_polling_interval: 0.5  # Пауза для REST fallback (секунды, если WebSocket недоступен)
