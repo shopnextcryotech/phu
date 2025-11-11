@@ -1,54 +1,40 @@
 """
-perpl_test_public.py — тестовый скрипт для проверки публичных методов MEXC и BingX (без API ключей)
-Выводит стакан через REST и WebSocket, а также последние сделки.
+Упрощённый тест REST API без WebSocket
+Проверяет стаканы и сделки через ccxt
 """
 import asyncio
 import ccxt.async_support as ccxt
-from src.connectivity.perpl_websocket_manager import PerplWebSocketManager
 
 SYMBOL = "BTC/USDC"
 
 async def test_rest():
-    print("--- REST orderbook MEXC ---")
+    print("=== REST API TEST ===\n")
+    
+    print("--- MEXC Orderbook ---")
     async with ccxt.mexc() as mexc:
         ob = await mexc.fetch_order_book(SYMBOL, limit=20)
-        print("Asks[0]:", ob["asks"][0], "Bids[0]:", ob["bids"][0])
-    print("--- REST orderbook BINGX ---")
+        print(f"Best Ask: {ob['asks'][0]}")
+        print(f"Best Bid: {ob['bids'][0]}")
+    
+    print("\n--- BingX Orderbook ---")
     async with ccxt.bingx() as bingx:
         ob = await bingx.fetch_order_book(SYMBOL, limit=20)
-        print("Asks[0]:", ob["asks"][0], "Bids[0]:", ob["bids"][0])
-
-async def test_ws():
-    print("--- WebSocket orderbook SNAPSHOT (MEXC/BingX, 1 раз) ---")
-    results = {}
-    def cb(market, symbol, snapshot):
-        if market not in results:
-            results[market] = snapshot
-    mgr = PerplWebSocketManager([SYMBOL], depth_mexc=20, depth_bingx=20)
-    mgr.add_orderbook_listener(cb)
-    await mgr.start()
-    await asyncio.sleep(2)
-    await mgr.stop()
-    for market, snap in results.items():
-        try:
-            print(f"{market} best_bid: {snap.bids[0].price}", f"best_ask: {snap.asks[0].price}")
-        except Exception as e:
-            print(market, "bad snapshot", e)
-
-async def test_trades():
-    print("--- Recent trades MEXC ---")
+        print(f"Best Ask: {ob['asks'][0]}")
+        print(f"Best Bid: {ob['bids'][0]}")
+    
+    print("\n--- MEXC Recent Trades ---")
     async with ccxt.mexc() as mexc:
-        trades = await mexc.fetch_trades(SYMBOL)
-        print(trades[:3])
-    print("--- Recent trades BINGX ---")
+        trades = await mexc.fetch_trades(SYMBOL, limit=5)
+        for t in trades:
+            print(f"{t['datetime']} | {t['side']:4s} | {t['price']} | {t['amount']}")
+    
+    print("\n--- BingX Recent Trades ---")
     async with ccxt.bingx() as bingx:
-        trades = await bingx.fetch_trades(SYMBOL)
-        print(trades[:3])
-
-async def main():
-    await test_rest()
-    await test_ws()
-    await test_trades()
+        trades = await bingx.fetch_trades(SYMBOL, limit=5)
+        for t in trades:
+            print(f"{t['datetime']} | {t['side']:4s} | {t['price']} | {t['amount']}")
+    
+    print("\n✅ TEST PASSED")
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    asyncio.run(test_rest())
