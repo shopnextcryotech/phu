@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+option java_package = "com.mxc.push.common.protobuf";
+option optimize_for = SPEED;
+option java_multiple_files = true;
+option java_outer_classname = "PushDataV3ApiWrapperProto";
+
+// Один уровень orderbook (цена + объём)
+message PublicLevelV3ApiItem {
+  string price = 1;
+  string quantity = 2;
+}
+
+// Orderbook depth data
+message PublicLimitDepthsV3Api {
+  repeated PublicLevelV3ApiItem asksList = 1;
+  repeated PublicLevelV3ApiItem bidsList = 2;
+  string eventType = 3;
+  string version = 4;
+}
+
+// Сделки (из твоего рабочего файла)
+message PublicAggreDealsV3ApiItem {
+  string price = 1;
+  string quantity = 2;
+  int32 tradeType = 3;
+  int64 time = 4;
+}
+
+message PublicAggreDealsV3Api {
+  repeated PublicAggreDealsV3ApiItem deals = 1;
+  string eventType = 2;
+}
+
+// Обёртка для всех типов данных
+message PushDataV3ApiWrapper {
+  string channel = 1;
+  oneof body {
+    PublicAggreDealsV3Api publicAggreDeals = 314;
+    PublicLimitDepthsV3Api publicLimitDepths = 310;
+  }
+  optional string symbol = 3;
+  optional string symbolId = 4;
+  optional int64 createTime = 5;
+  optional int64 sendTime = 6;
+}
