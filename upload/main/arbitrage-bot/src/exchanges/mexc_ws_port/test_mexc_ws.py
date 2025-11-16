@@ -27,7 +27,7 @@ def _setup_logging() -> None:
 async def main() -> None:
     _setup_logging()
     client = MEXCClient()
-    stream = client.subscribe_trades("BTCUSDT")
+    stream = client.subscribe_trades("BTCUSDC")
     try:
         trades = await stream.__anext__()
         for trade in trades:
